@@ -12,4 +12,5 @@ nov 24
 jank fix for the scoping issue... after globalizing the variable this solved
 the scoping issue. reading and writing json for settings. i think it might be
 time to write a separate program to rename all my files such that they are
-printable to console.
+printable to console. the script to rename, listify, and print all the songs is
+working. it does not try to catch naming colissions
