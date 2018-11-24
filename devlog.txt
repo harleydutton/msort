@@ -1,4 +1,4 @@
-nov 24
+nov 23
 i have begun rewriting launcher.py as musicSort.py (i should rename it to
 msort.py) with some best practices in mind. i will be doing testing away from
 the main project from now on so as to not make a mess in my code. I have also
@@ -7,3 +7,7 @@ program can take input when not focused. i need to check if there is an easy
 way for me to edit tags on files. i need to check and see if tags are
 standardized at all across OS's. i need to add some test folders for ease with
 east-to-checkout names.
+
+nov 24
+jank fix for the scoping issue... after globalizing the variable this solved
+the scoping issue. reading and writing json for settings.
