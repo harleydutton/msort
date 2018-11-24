@@ -10,4 +10,6 @@ east-to-checkout names.
 
 nov 24
 jank fix for the scoping issue... after globalizing the variable this solved
-the scoping issue. reading and writing json for settings.
+the scoping issue. reading and writing json for settings. i think it might be
+time to write a separate program to rename all my files such that they are
+printable to console.
