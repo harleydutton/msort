@@ -5,4 +5,5 @@ the main project from now on so as to not make a mess in my code. I have also
 started using git versioning for the same purpose. i need to check if this
 program can take input when not focused. i need to check if there is an easy
 way for me to edit tags on files. i need to check and see if tags are
-standardized at all across OS's.
+standardized at all across OS's. i need to add some test folders for ease with
+east-to-checkout names.
