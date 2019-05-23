@@ -2,33 +2,34 @@ import pygame
 from os import listdir
 from os.path import isfile,join,exists,isdir
 
-path = 'C:\\Users\\harley\\Desktop\\music workshop\\music - Copy\\'
-#get the rootpath.
-rootpath = 'C:\\Users\\harley\\Desktop\\music workshop\\'
-#then prompt for the name of the music folder
-musicfolder = ''
-fixfolder = musicfolder+'-fix'
-upvotefolder = musicfolder+'-upvote'
-downvotefolder = musicfolder+'-downvote'
-datafolder = 'data'
-#make the log file, the options file, and store the sound files
 
-print('path'+path)
+#get the location of some local storage
+storagedir = 'C:\\Users\\harley\\Desktop\\'
+print("using "+storagedir+" as local storage for options and such")
 
-songs = [f for f in listdir(path) if isfile(join(path, f))]
-folders = [f for f in listdir(path) if isdir(join(path, f))]
+#check if you have a path to a music folder
+#if not open a filebrowser and let the user select one then save it
+#then use the one that is saved
+musicdir = 'C:\\Users\\harley\\Desktop\\music - Copy\\'
+print("looking for music in "+musicdir)
 
-print('folders:')
-print(folders)
+#I dont think this is delving recursively. for now that is fine
+songs = [f for f in listdir(musicdir) if isfile(join(musicdir, f))]
 print('songs:')
 print(songs[0])
-print(path+songs[0])
-playing = False
+print(musicdir+songs[0])
 
+#what is this doing?
+folders = [f for f in listdir(musicdir) if isdir(join(musicdir, f))]
+print('folders:')
+print(folders)
+
+
+playing = False
 try:
     pygame.init()
     pygame.display.set_mode((200,100))
-    pygame.mixer.music.load(""+path+songs[0])
+    pygame.mixer.music.load(""+musicdir+songs[0])
     pygame.mixer.music.play(0)
     playing = True
     clock = pygame.time.Clock()
@@ -44,8 +45,6 @@ try:
             playing = not playing
         if pygame.key.get_pressed()[pygame.K_q]:
             exit(0)
-
-
 except Exception as e:
     print("error:",e)
 
