@@ -1,9 +1,10 @@
 ##mSort
 
 #Version Info
-	* java version "12.0.1" 2019-04-16
-	* jnativehook-2.1.0
-	* beads <version unknown>
+	* python
+	* keyboard
+	* pip
+	* <audio library>
 
 #Description
 mSort is a custom media player I have written in python to include some custom features I was not able to find in commercially available media players.
@@ -27,3 +28,4 @@ mSort is a custom media player I have written in python to include some custom f
 
 #Devlopment Log
 encountered many problems with python. switching to java. should help with android port.
+java is worse. switching back
