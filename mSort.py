@@ -87,7 +87,7 @@ while True:
                         else:
                             pygame.mixer.music.unpause()
                         playing = not playing
-                    elif event.key == 270                       #numpad +
+                    elif event.key == 270:                       #numpad +
                         volume = volume + 0.01
                         if volume >= 1.0:
                             volume = 1.0
