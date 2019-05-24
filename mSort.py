@@ -10,12 +10,14 @@ localdir = os.path.expanduser('~'+sep+'desktop')
 
 storagedir = localdir+sep+'data'
 settingsfile = storagedir+sep+'settings.json'
+metadatafile = storagedir+sep+'metadata.json'
 
 musicdir = ''
 musicdirname = ''
 settings = {}
+metadata = {}
 
-def initSettings():
+def initSettingsFile():
     global musicdir, musicdirname, settings
     musicdirname = input('What is the name of the folder with your music? ')
     musicdir = localdir+sep+musicdirname
@@ -26,6 +28,13 @@ def initSettings():
     f.write(json_data)
     f.close()
 
+def initMetadataFile():
+	global metadata
+	json_data = json.dumps(metadata)
+	f = open(metadatafile,'w+')
+	f.write(json_data)
+	f.close()
+
 if os.path.isdir(storagedir):
     if os.path.isfile(settingsfile):
         f = open(settingsfile,'r')
@@ -35,10 +44,17 @@ if os.path.isdir(storagedir):
             musicdirname = settings['musicdirname']
             f.close()
     else:
-        initSettings()
+        initSettingsFile()
+    if os.path.isfile(metadatafile):
+    	f = open(metadatafile,'r')
+    	metadata = json.loads(f.read())
+    	f.close()
+    else:
+    	initMetadataFile()
 else:
     os.makedirs(storagedir)
-    initSettings()
+    initSettingsFile()
+    initMetadataFile()
 
 if not os.path.isdir(musicdir):
     print('musicdir does not exist.')
@@ -56,6 +72,7 @@ songnum = 0
 playing = False
 volume = 0.5
 alive = True
+
 
 pygame.mixer.init()
 
@@ -102,7 +119,7 @@ def next():
 
 def quit():
 	global alive
-	print('exiting')
+	print('exiting...')
 	alive = False
 
 keyboard.add_hotkey('ctrl+shift+x',quit,args=())
@@ -120,7 +137,6 @@ while alive == True:
 
 pygame.mixer.music.stop()
 pygame.mixer.quit()
-exit(0)
     
     
     
