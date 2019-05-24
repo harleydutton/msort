@@ -67,49 +67,51 @@ pygame.init()
 pygame.display.set_mode((200,100))
 
 while True:
-    try:        
+    try:      
+        songnum = songnum % len(songs)  
         pygame.mixer.music.load(""+musicdir+sep+songs[songnum])
         pygame.mixer.music.set_volume(volume)
         print('song',songnum,'---',songs[songnum])
         pygame.mixer.music.play(0)
         playing = True
 
-        while True:
+        while pygame.mixer.music.get_busy():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit(0)
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == 27:                         #escape
+                    if event.key == 27:#escape
                         exit(0)
-                    elif event.key == 32:                       #spacebar
+                    elif event.key == 274:#down arrow
                         if playing:
                             pygame.mixer.music.pause()
                         else:
                             pygame.mixer.music.unpause()
                         playing = not playing
-                    elif event.key == 270:                       #numpad +
+                    elif event.key == 270:#numpad +
                         volume = volume + 0.01
                         if volume >= 1.0:
                             volume = 1.0
                         pygame.mixer.music.set_volume(volume)
-                    elif event.key == 269:                      #numpad -
+                    elif event.key == 269:#numpad -
                         volume = volume - 0.01
                         if volume <= 0.0:
                             volume = 0.0
                         pygame.mixer.music.set_volume(volume)
-                    elif event.key == 275:                      #right arrow
-                        songnum = songnum + 1
-                        songnum = songnum % len(songs)
+                    elif event.key == 275:#right arrow
                         changeSong = True
                         break
-                    elif event.key == 276:                      #left arrow
-                        songnum = songnum - 1
-                        songnum = songnum % len(songs)
+                    elif event.key == 276:#left arrow
+                        songnum = songnum - 2
                         changeSong = True
                         break
+                    elif event.key == 273:#up arrow
+                        print('pressed up')
             if changeSong == True:
                 changeSong = False
                 break
+        songnum = songnum + 1
     except Exception as e:
         print(e,'--',songs[songnum])
+        songnum = songnum + 1
     
