@@ -17,10 +17,10 @@ mSort is a custom media player I have written in python to include some custom f
 
 ## Custom features
   * creating, tracking, and syncing many bits of metadata for each song including
-  * times skipped (hitting the 'previous' will skips)
     * times played (all the way through)
     * times skipped (-1 for hitting previous)
     * volume changes at various points in a song
+    * damaged status (how/when will i remove this flag?)
   * a hotkey to mark a song as damaged
   * global hooks to listen to keyboard when not focused
 	
