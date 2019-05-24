@@ -1,11 +1,11 @@
 ##mSort
 
-#VERSION INFO:
-	* Python 3.7.3
-	* pip        19.1.1
-	* pygame     1.9.6
+#Version Info
+	* java version "12.0.1" 2019-04-16
+	* jnativehook-2.1.0
+	* beads <version unknown>
 
-#DESCRIPTION:
+#Description
 mSort is a custom media player I have written in python to include some custom features I was not able to find in commercially available media players.
 
 #Common features (to be) included
@@ -25,3 +25,5 @@ mSort is a custom media player I have written in python to include some custom f
 	* track plays as well as skips
 	* non-shuffle mode
 
+#Devlopment Log
+encountered many problems with python. switching to java. should help with android port.

@@ -1,7 +1,8 @@
 import os
 import json
-import pygame
 import random
+import keyboard
+import simpleaudio
 
 sep = os.path.sep
 
@@ -34,7 +35,6 @@ if os.path.isdir(storagedir):
         f = open(settingsfile,'r')
         if f.mode == 'r':
             settings = json.loads(f.read())
-            #breaks if the key names are wrong. add an exception
             musicdir = settings['musicdir']
             musicdirname = settings['musicdirname']
             f.close()
@@ -59,59 +59,85 @@ random.shuffle(songs)
 print(len(songs),'songs found')
 
 songnum = 0
-playing = False
-volume = 0.5
-changeSong = False
 
-pygame.init()
-pygame.display.set_mode((200,100))
+songwav = simpleaudio.WaveObject.from_wave_file(os.path.join(musicdir,songs[songnum]))
+songwav.play()
 
-while True:
-    try:      
-        songnum = songnum % len(songs)  
-        pygame.mixer.music.load(""+musicdir+sep+songs[songnum])
-        pygame.mixer.music.set_volume(volume)
-        print('song',songnum,'---',songs[songnum])
-        pygame.mixer.music.play(0)
-        playing = True
 
-        while pygame.mixer.music.get_busy():
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit(0)
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == 27:#escape
-                        exit(0)
-                    elif event.key == 274:#down arrow
-                        if playing:
-                            pygame.mixer.music.pause()
-                        else:
-                            pygame.mixer.music.unpause()
-                        playing = not playing
-                    elif event.key == 270:#numpad +
-                        volume = volume + 0.01
-                        if volume >= 1.0:
-                            volume = 1.0
-                        pygame.mixer.music.set_volume(volume)
-                    elif event.key == 269:#numpad -
-                        volume = volume - 0.01
-                        if volume <= 0.0:
-                            volume = 0.0
-                        pygame.mixer.music.set_volume(volume)
-                    elif event.key == 275:#right arrow
-                        changeSong = True
-                        break
-                    elif event.key == 276:#left arrow
-                        songnum = songnum - 2
-                        changeSong = True
-                        break
-                    elif event.key == 273:#up arrow
-                        print('pressed up')
-            if changeSong == True:
-                changeSong = False
-                break
-        songnum = songnum + 1
-    except Exception as e:
-        print(e,'--',songs[songnum])
-        songnum = songnum + 1
+
+
+
+
+# song = pydub.AudioSegment.from_wav(os.path.join(musicdir,songs[songnum]))
+# play(song)
+
+
+# playing = False
+# volume = 0.5
+# changeSong = False
+
+# pygame.init()
+# pygame.display.set_mode((200,100))
+
+# keyboard.add_hotkey('ctrl+shift+q',exit,args=(0))
+
+# def playPause():
+#     global playing
+#     if playing:
+#         pygame.mixer.music.pause()
+#     else:
+#         pygame.mixer.music.unpause()
+#     playing = not playing
+# keyboard.add_hotkey('ctrl+down',playPause,args=())
+
+# def volDown():
+#     global volume
+#     volume = volume * 0.9
+#     if volume <= 0.0:
+#         volume = 0.001
+#     pygame.mixer.music.set_volume(volume)
+# keyboard.add_hotkey('ctrl+shift+-',volDown,args=())
+
+# def volUp():
+#     global volume
+#     volume = volume * 1.1
+#     if volume >= 1.0:
+#         volume = 1.0
+#     pygame.mixer.music.set_volume(volume)
+# keyboard.add_hotkey('ctrl+shift+plus',volUp,args=())
+
+# def next():
+#     global songnum, volume, musicdir, sep, songs, changeSong
+#     songnum = songnum + 1
+#     songnum = songnum % len(songs)
+#     changeSong = False
+#     try:
+#         pygame.mixer.music.load(""+musicdir+sep+songs[songnum])
+#         pygame.mixer.music.set_volume(volume)
+#         print('song',songnum,'---',songs[songnum])
+#         pygame.mixer.music.play(0)
+#         playing = True
+#         while pygame.mixer.music.get_busy():
+#             pass
+#     except Exception as e:
+#         print(e,'--',songs[songnum])
+#     if changeSong == False:
+#         next()
+# def skip():
+#     global changeSong
+#     changeSong = True
+#     next()
+# keyboard.add_hotkey('ctrl+right',skip,args=())
+
+# next()
+#def prev():
+
+# while True:
+#     try:      
+#         next()
+#         while pygame.mixer.music.get_busy():
+#             for event in pygame.event.get():
+#                 if event.type == pygame.QUIT:
+#                     exit(0)
+    
     
