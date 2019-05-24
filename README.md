@@ -1,11 +1,11 @@
 ##mSort
 
 #Version Info
-	* python
-	* keyboard
-	* pip
-	* <audio library>
-
+	* python 3.7.3
+	* keyboard 0.13.3
+	* pip 19.1.1
+	* pygame 1.9.6
+	
 #Description
 mSort is a custom media player I have written in python to include some custom features I was not able to find in commercially available media players.
 
