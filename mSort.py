@@ -61,6 +61,7 @@ print(len(songs),'songs found')
 songnum = 0
 playing = False
 volume = 0.5
+changeSong = False
 
 pygame.init()
 pygame.display.set_mode((200,100))
@@ -69,37 +70,46 @@ while True:
     try:        
         pygame.mixer.music.load(""+musicdir+sep+songs[songnum])
         pygame.mixer.music.set_volume(volume)
-        pygame.mixer.music.play(0)
         print('song',songnum,'---',songs[songnum])
+        pygame.mixer.music.play(0)
         playing = True
 
-        while pygame.mixer.music.get_busy():
-            #pygame.event.poll()
-            pygame.event.pump()
-            if pygame.key.get_pressed()[pygame.K_SPACE]:
-                if playing:
-                    pygame.mixer.music.pause()
-                else:
-                    pygame.mixer.music.unpause()
-                playing = not playing
-            if pygame.key.get_pressed()[pygame.K_n]:
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit(0)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == 27:                         #escape
+                        exit(0)
+                    elif event.key == 32:                       #spacebar
+                        if playing:
+                            pygame.mixer.music.pause()
+                        else:
+                            pygame.mixer.music.unpause()
+                        playing = not playing
+                    elif event.key == 270                       #numpad +
+                        volume = volume + 0.01
+                        if volume >= 1.0:
+                            volume = 1.0
+                        pygame.mixer.music.set_volume(volume)
+                    elif event.key == 269:                      #numpad -
+                        volume = volume - 0.01
+                        if volume <= 0.0:
+                            volume = 0.0
+                        pygame.mixer.music.set_volume(volume)
+                    elif event.key == 275:                      #right arrow
+                        songnum = songnum + 1
+                        songnum = songnum % len(songs)
+                        changeSong = True
+                        break
+                    elif event.key == 276:                      #left arrow
+                        songnum = songnum - 1
+                        songnum = songnum % len(songs)
+                        changeSong = True
+                        break
+            if changeSong == True:
+                changeSong = False
                 break
-            if pygame.key.get_pressed()[pygame.K_KP_PLUS]:
-                volume = volume + 0.01
-                if volume >= 1.0:
-                    volume = 1.0
-                pygame.mixer.music.set_volume(volume)
-            if pygame.key.get_pressed()[pygame.K_KP_MINUS]:
-                volume = volume - 0.01
-                if volume <= 0.0:
-                    volume = 0.0
-                pygame.mixer.music.set_volume(volume)
-            if pygame.key.get_pressed()[pygame.K_ESCAPE]:
-                exit(0)
     except Exception as e:
-        print('error:',e,songs[songnum])
-    songnum=songnum+1
-    songnum=songnum%len(songs)
-
-
-
+        print(e,'--',songs[songnum])
+    

@@ -1,9 +1,9 @@
 ##mSort
 
 #VERSION INFO:
-Python 3.7.3
-pip        19.1.1
-pygame     1.9.6
+	* Python 3.7.3
+	* pip        19.1.1
+	* pygame     1.9.6
 
 #DESCRIPTION:
 mSort is a custom media player I have written in python to include some custom features I was not able to find in commercially available media players.
@@ -20,8 +20,8 @@ mSort is a custom media player I have written in python to include some custom f
 	* sync this metadata to google drive for use across devices
 	* some minimal UI that receives input when other apps are focused
 
-#Stretch goals
+#Things I might add
 	* machine assisted equalization (track volume)
-	* track plays as well as skips?
-	* non-shuffle mode?
+	* track plays as well as skips
+	* non-shuffle mode
 
