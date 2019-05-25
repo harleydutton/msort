@@ -5,28 +5,43 @@ import pygame
 import keyboard
 
 sep = os.path.sep
-
 localdir = os.path.expanduser('~'+sep+'desktop')
-
-storagedir = localdir+sep+'data'
+storagedir = localdir+sep+'mSortLocalData'
 settingsfile = storagedir+sep+'settings.json'
 metadatafile = storagedir+sep+'metadata.json'
-
 musicdir = ''
 musicdirname = ''
+
 settings = {}
 metadata = {}
+volume = 0.5
+songnum = 0
+playing = False
+alive = True
+
+
+def saveSettings():
+	settings['volume'] = volume
+	settings['musicdir'] = musicdir
+	settings['musicdirname'] = musicdirname
+	json_data = json.dumps(settings)
+	f = open(settingsfile,"w+")
+	f.write(json_data)
+	f.close()
+
+def saveMetadata():
+	print('saving metadata...')
+	print(metadata)
+	json_data = json.dumps(metadata)
+	f = open(metadatafile,"w+")
+	f.write(json_data)
+	f.close()
 
 def initSettingsFile():
-    global musicdir, musicdirname, settings
-    musicdirname = input('What is the name of the folder with your music? ')
-    musicdir = localdir+sep+musicdirname
-    settings['musicdir'] = musicdir
-    settings['musicdirname'] = musicdirname
-    json_data = json.dumps(settings)
-    f = open(settingsfile,"w+")
-    f.write(json_data)
-    f.close()
+	global musicdir, musicdirname, settings
+	musicdirname = input('What is the name of the folder with your music? ')
+	musicdir = localdir+sep+musicdirname
+	saveSettings()
 
 def initMetadataFile():
 	global metadata
@@ -68,12 +83,6 @@ songs = [f for f in os.listdir(musicdir) if os.path.isfile(os.path.join(musicdir
 random.shuffle(songs)
 print(len(songs),'songs found')
 
-songnum = 0
-playing = False
-volume = 0.5
-alive = True
-
-
 pygame.mixer.init()
 
 def playPause():
@@ -111,10 +120,26 @@ def loadNplay():
 
 def prev():
 	global songnum
-	songnum = songnum - 2
+	songnum-=1
+	song = songs[songnum]
+	if song not in metadata:
+		metadata[song]={}
+	if 'skips' in metadata[song]:
+		metadata[song]['skips']-=1
+		if metadata[song]['skips']<0:
+			metadata[song]['skips']=0
+	songnum-=1 #this is to counteract the +1 that will happen when the inner main loop quits
 	pygame.mixer.music.stop()
 
 def next():
+	global songs,songnum,metadata
+	song = songs[songnum]
+	if song not in metadata:
+		metadata[song]={}
+	if 'skips' in metadata[song]:
+		metadata[song]['skips']+=1
+	else:
+		metadata[song]['skips']=1
 	pygame.mixer.music.stop()
 
 def quit():
@@ -122,7 +147,7 @@ def quit():
 	print('exiting...')
 	alive = False
 
-keyboard.add_hotkey('ctrl+shift+x',quit,args=())
+keyboard.add_hotkey('ctrl+shift+q',quit,args=())
 keyboard.add_hotkey('ctrl+down',playPause,args=())
 keyboard.add_hotkey('ctrl+shift+plus',volUp,args=())
 keyboard.add_hotkey('ctrl+shift+-',volDown,args=())
@@ -136,6 +161,8 @@ while alive == True:
 	songnum = songnum + 1
 
 pygame.mixer.music.stop()
+saveMetadata()
+saveSettings()
 pygame.mixer.quit()
     
     
