@@ -27,24 +27,29 @@ mSort is a custom media player I have written in python to include some custom f
     * damaged status (how/when will i remove this flag?)
 
 ## To Do
+Remove unncessary 'global' tags in functions.
+seems like they are only needed for variables that appear on the left side of an assignment statemtnt. possibly only before they are used on the right side. possibly not.
 
-Remove unncessary 'global' tags in functions. seems like they are only needed for variables that appear on the left side of an assignment statemtnt. possibly only before they are used on the right side. possibly not.
+Add a search feature.
+this is probably going to be a process: some hotkey combo to start up a search -> some way to cancel or speech recognition or take over the keyboard and consume everything until enter -> use some kind of predictive text/spellcheck/injection engine to figure out what the user actually wants -> find it in the list, set the songnum, and hit play. if it finds more than one thing it might try using google text to speech to list out the options and let you press a number button, one through zero, say to select one.
 
-add some kind of search feature. this is probably going to be a process: some hotkey combo to start up a search -> some way to cancel or speech recognition or take over the keyboard and consume everything until enter -> use some kind of predictive text/spellcheck/injection engine to figure out what the user actually wants -> find it in the list, set the songnum, and hit play. if it finds more than one thing it might try using google text to speech to list out the options and let you press a number button, one through zero, say to select one.
+Track how many times a song has played all the way through.
+when you skip() set the plays to -1 to counteract the default +1 if the song had no previous play count.
 
-add more analytics stuff. tracking a song's plays perhaps (all the way through)
+Add a way to like a song.
+This should have a hotkey associated with it. perhaps the up arrow? track this with an int metadata or some such. seems like a good idea to limit this to once per play.
 
-possibly add some way to 'like' a song. perhaps a hotkey and a new metadata int. only once per play?
+Syncing.
+I am not sure what all I will want to sync. probably the metadata and damaged songs list. either don't track settings or only track global settings.
 
-get the metadata, settings, etc. to sync.
+Add a way to mark a song as damaged.
+also do this whenever a song throws an error message mark it as damaged and move on. conveniently we have some damaged songs to use as guinnea pigs. songs that are marked as damaged should immediately be removed from metadata and instead written to a text doc. any songs that are on 'damaged.txt' should not have any new metadata tracked for them. when a song is removed from 'damaged.txt' metadata should start being collected for it again immediately. the idea here is that the user should check this list, remove all of those songs, and remove 'broken.txt'. then the user can fix and put back any number of the afflicted songs. if a song is marked broken on accident or without good cause there is little harm. just leave the song and remove 'broken.txt' or the entry therein. this will lead to some proportion issues with the metadata where it looks like a brand new song to the playlist when this happens. alternatively i could just let the metadata file bloat (allow it to keep collecting data and not remove entries for damaged songs). i think that might be a worse idea however. I think ctrl+down is a reasonable hotkey. i kinda want to move playPause to strl+space anyway.
 
-figure out how to use the metadata
+Have songs fade in and out.
+I might need to go look for a new audio library. I am not sure pygame can handle this.
 
-put some way to mark songs as damaged and wheneger a song throws an error message mark it as damaged and move on. conveniently we have some damaged songs to use as guinnea pigs. songs that are marked as damaged should immediately be removed from metadata and instead written to a text doc. any songs that are on 'damaged.txt' should not have any new metadata tracked for them. when a song is removed from 'damaged.txt' metadata should start being collected for it again immediately. the idea here is that the user should check this list, remove all of those songs, and remove 'broken.txt'. then the user can fix and put back any number of the afflicted songs. if a song is marked broken on accident or without good cause there is little harm. just leave the song and remove 'broken.txt' or the entry therein. this will lead to some proportion issues with the metadata where it looks like a brand new song to the playlist when this happens. alternatively i could just let the metadata file bloat (allow it to keep collecting data and not remove entries for damaged songs). i think that might be a worse idea however.
-
-have songs fade in and out
-
-find some way to trim off the empty noise at the beginnings and ends of songs
+Find some way to remove silence at the beginning and ends of songs.
+I saw something to this effect. let me provide a link. https://www.swharden.com/wp/2009-06-19-reading-pcm-audio-with-python/
 
 ## Devlopment Log
 Encountered many problems with python. switching to java. should help with android port.

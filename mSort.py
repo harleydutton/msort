@@ -3,7 +3,6 @@ import json
 import random
 import pygame
 import keyboard
-#from mutagen.mp3 import MP3
 import mutagen.mp3
 
 sep = os.path.sep
@@ -123,7 +122,6 @@ def loadNplay():
 	except Exception as e:
 		print(e)
 		print('song',songnum,'---',songs[songnum])
-		#TODO: automatically mark this song as damaged
 
 def prev():
 	global songnum
