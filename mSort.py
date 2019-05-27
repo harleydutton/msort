@@ -144,7 +144,7 @@ def loadNplay():
 		pygame.mixer.music.play(0)
 	except Exception as e:
 		print(e)
-		print('song',songnum,'---',songs[songnum])
+		markBroken()
 
 def prev():
 	global songnum
