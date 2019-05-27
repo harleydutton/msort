@@ -30,6 +30,8 @@ mSort is a custom media player I have written in python to include some custom f
 Remove unncessary 'global' tags in functions.
 seems like they are only needed for variables that appear on the left side of an assignment statemtnt. possibly only before they are used on the right side. possibly not.
 
+Do some cleaning on the readme. It is pretty dang messy. possibly also move the devlog and todo lists somewhere else. they don't really belong here.
+
 Add a search feature.
 this is probably going to be a process: some hotkey combo to start up a search -> some way to cancel or speech recognition or take over the keyboard and consume everything until enter -> use some kind of predictive text/spellcheck/injection engine to figure out what the user actually wants -> find it in the list, set the songnum, and hit play. if it finds more than one thing it might try using google text to speech to list out the options and let you press a number button, one through zero, say to select one.
 
