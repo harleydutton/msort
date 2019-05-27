@@ -6,8 +6,10 @@ import keyboard
 import mutagen.mp3
 
 sep = os.path.sep
+nl = os.linesep
 localdir = os.path.expanduser('~'+sep+'desktop')
 storagedir = localdir+sep+'mSortLocalData'
+brokenfile = storagedir+sep+'broken.txt'
 settingsfile = storagedir+sep+'settings.json'
 metadatafile = storagedir+sep+'metadata.json'
 musicdir = ''
@@ -15,6 +17,7 @@ musicdirname = ''
 
 settings = {}
 metadata = {}
+broken = []
 volume = 0.5
 songnum = 0
 playing = True
@@ -35,6 +38,15 @@ def saveMetadata():
 	f = open(metadatafile,"w+")
 	f.write(json_data)
 	f.close()
+
+def saveBrokenList():
+	f = open(brokenfile,'w')
+	f.writlines(broken)
+	f.close()
+
+def initBrokenList():
+	global broken
+	saveBrokenList()
 
 def initSettingsFile():
 	global musicdir, musicdirname, settings
@@ -57,7 +69,7 @@ if os.path.isdir(storagedir):
             musicdir = settings['musicdir']
             musicdirname = settings['musicdirname']
             volume = settings['volume']
-            f.close()
+        f.close()
     else:
         initSettingsFile()
     if os.path.isfile(metadatafile):
@@ -66,10 +78,17 @@ if os.path.isdir(storagedir):
     	f.close()
     else:
     	initMetadataFile()
+    if os.path.isfile(brokenfile):
+    	f = open(brokenfile,'r')
+    	broken = f.readlines()
+    	f.close()
+    else:
+    	initBrokenList()
 else:
     os.makedirs(storagedir)
     initSettingsFile()
     initMetadataFile()
+    initBrokenList()
 
 if not os.path.isdir(musicdir):
     print('musicdir does not exist.')
@@ -83,6 +102,10 @@ print('volume is {}'.format(volume))
 songs = [f for f in os.listdir(musicdir) if os.path.isfile(os.path.join(musicdir,f))]
 random.shuffle(songs)
 print(len(songs),'songs found')
+
+print(len(broken),'songs to be removed due to damage')
+songs = list(set(songs)-set(broken))
+print(len(songs),'songs remain')
 
 def playPause():
     global playing
@@ -127,24 +150,35 @@ def prev():
 	global songnum
 	songnum-=1
 	song = songs[songnum]
-	if song not in metadata:
-		metadata[song]={}
-	if 'skips' in metadata[song]:
-		metadata[song]['skips']-=1
-		if metadata[song]['skips']<0:
-			metadata[song]['skips']=0
+	if song not in broken:
+		if song not in metadata:
+			metadata[song]={}
+		if 'skips' in metadata[song]:
+			metadata[song]['skips']-=1
+			if metadata[song]['skips']<0:
+				metadata[song]['skips']=0
 	songnum-=1 #this is to counteract the +1 that will happen when the inner main loop quits
 	pygame.mixer.music.stop()
+
+def markBroken():
+	global broken, songs, metadata, songnum
+	song = songs[songnum]
+	broken.append(song)
+	songs.remove(song)
+	metadata.pop(song,None)
+	print('song',songnum,'---',songs[songnum],'has been marked as broken and benched')
+	loadNplay()
 
 def next():
 	global songs,songnum,metadata
 	song = songs[songnum]
-	if song not in metadata:
-		metadata[song]={}
-	if 'skips' in metadata[song]:
-		metadata[song]['skips']+=1
-	else:
-		metadata[song]['skips']=1
+	if song not in broken:
+		if song not in metadata:
+			metadata[song]={}
+		if 'skips' in metadata[song]:
+			metadata[song]['skips']+=1
+		else:
+			metadata[song]['skips']=1
 	pygame.mixer.music.stop()
 
 def quit():
@@ -158,6 +192,7 @@ keyboard.add_hotkey('ctrl+shift+plus',volUp,args=())
 keyboard.add_hotkey('ctrl+shift+-',volDown,args=())
 keyboard.add_hotkey('ctrl+right',next,args=())
 keyboard.add_hotkey('ctrl+left',prev,args=())
+keyboard.add_hotkey('ctrl+shift+x',markBroken,args=())
 
 pygame.mixer.init()
 while alive == True:
@@ -168,6 +203,7 @@ while alive == True:
 pygame.mixer.music.stop()
 saveMetadata()
 saveSettings()
+saveBrokenList()
 pygame.mixer.quit()
 print('goodbye.')
     
