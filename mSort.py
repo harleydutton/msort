@@ -3,6 +3,8 @@ import json
 import random
 import pygame
 import keyboard
+#from mutagen.mp3 import MP3
+import mutagen.mp3
 
 sep = os.path.sep
 localdir = os.path.expanduser('~'+sep+'desktop')
@@ -16,9 +18,8 @@ settings = {}
 metadata = {}
 volume = 0.5
 songnum = 0
-playing = False
+playing = True
 alive = True
-
 
 def saveSettings():
 	settings['volume'] = volume
@@ -31,7 +32,6 @@ def saveSettings():
 
 def saveMetadata():
 	print('saving metadata...')
-	print(metadata)
 	json_data = json.dumps(metadata)
 	f = open(metadatafile,"w+")
 	f.write(json_data)
@@ -57,6 +57,7 @@ if os.path.isdir(storagedir):
             settings = json.loads(f.read())
             musicdir = settings['musicdir']
             musicdirname = settings['musicdirname']
+            volume = settings['volume']
             f.close()
     else:
         initSettingsFile()
@@ -78,12 +79,11 @@ if not os.path.isdir(musicdir):
 
 print('storage dir is {}'.format(storagedir))
 print('music folder is {}'.format(musicdir))
+print('volume is {}'.format(volume))
 
 songs = [f for f in os.listdir(musicdir) if os.path.isfile(os.path.join(musicdir,f))]
 random.shuffle(songs)
 print(len(songs),'songs found')
-
-pygame.mixer.init()
 
 def playPause():
     global playing
@@ -110,13 +110,20 @@ def volUp():
 def loadNplay():
 	global songnum,songs,musicdir,sep,volume
 	songnum = songnum % len(songs)
+	songpath = ""+musicdir+sep+songs[songnum]
 	try:
-		pygame.mixer.music.load(""+musicdir+sep+songs[songnum])
+		song = mutagen.mp3.MP3(songpath)
+		if pygame.mixer.get_init()[0] != song.info.sample_rate:
+			pygame.mixer.quit()
+			pygame.mixer.init(frequency=song.info.sample_rate)
+		pygame.mixer.music.load(songpath)
 		pygame.mixer.music.set_volume(volume)
 		print('song',songnum,'---',songs[songnum])
 		pygame.mixer.music.play(0)
 	except Exception as e:
-		print(e,'--',songs[songnum])
+		print(e)
+		print('song',songnum,'---',songs[songnum])
+		#TODO: automatically mark this song as damaged
 
 def prev():
 	global songnum
@@ -154,16 +161,17 @@ keyboard.add_hotkey('ctrl+shift+-',volDown,args=())
 keyboard.add_hotkey('ctrl+right',next,args=())
 keyboard.add_hotkey('ctrl+left',prev,args=())
 
+pygame.mixer.init()
 while alive == True:
 	loadNplay()
 	while pygame.mixer.music.get_busy() and alive == True:
 		pass
 	songnum = songnum + 1
-
 pygame.mixer.music.stop()
 saveMetadata()
 saveSettings()
 pygame.mixer.quit()
+print('goodbye.')
     
     
     
