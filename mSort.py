@@ -6,7 +6,7 @@ import keyboard
 import mutagen.mp3
 
 sep = os.path.sep
-nl = os.linesep
+nl = '\n'
 localdir = os.path.expanduser('~'+sep+'desktop')
 storagedir = localdir+sep+'mSortLocalData'
 brokenfile = storagedir+sep+'broken.txt'
@@ -22,6 +22,7 @@ volume = 0.5
 songnum = 0
 playing = True
 alive = True
+killcount = 0
 
 def saveSettings():
 	settings['volume'] = volume
@@ -40,12 +41,19 @@ def saveMetadata():
 	f.close()
 
 def saveBrokenList():
-	f = open(brokenfile,'w')
-	f.writlines(broken)
-	f.close()
+	global broken
+	broken = list(filter(lambda a: a != nl, broken))
+	broken.sort()
+	for b in broken:
+		print(b)
+	print(killcount,'songs have been added to broken.txt')
+	if os.path.isfile(brokenfile):
+		os.remove(brokenfile)
+	with open(brokenfile,'w',encoding='utf-8') as f:
+		for b in broken:
+			f.write(b+nl)
 
 def initBrokenList():
-	global broken
 	saveBrokenList()
 
 def initSettingsFile():
@@ -62,33 +70,31 @@ def initMetadataFile():
 	f.close()
 
 if os.path.isdir(storagedir):
-    if os.path.isfile(settingsfile):
-        f = open(settingsfile,'r')
-        if f.mode == 'r':
-            settings = json.loads(f.read())
-            musicdir = settings['musicdir']
-            musicdirname = settings['musicdirname']
-            volume = settings['volume']
-        f.close()
-    else:
-        initSettingsFile()
-    if os.path.isfile(metadatafile):
-    	f = open(metadatafile,'r')
-    	metadata = json.loads(f.read())
-    	f.close()
-    else:
-    	initMetadataFile()
-    if os.path.isfile(brokenfile):
-    	f = open(brokenfile,'r')
-    	broken = f.readlines()
-    	f.close()
-    else:
-    	initBrokenList()
+	if os.path.isfile(settingsfile):
+		with open(settingsfile,'r') as f:
+			settings = json.loads(f.read())
+			musicdir = settings['musicdir']
+			musicdirname = settings['musicdirname']
+			volume = settings['volume']
+	else:
+		initSettingsFile()
+	if os.path.isfile(metadatafile):
+		f = open(metadatafile,'r')
+		metadata = json.loads(f.read())
+		f.close()
+	else:
+		initMetadataFile()
+	if os.path.isfile(brokenfile):
+		with open(brokenfile,'r',encoding='utf-8') as f:
+			broken = f.readlines()
+		broken = list(filter(lambda a: a != nl, broken))
+	else:
+		initBrokenList()
 else:
-    os.makedirs(storagedir)
-    initSettingsFile()
-    initMetadataFile()
-    initBrokenList()
+	os.makedirs(storagedir)
+	initSettingsFile()
+	initMetadataFile()
+	initBrokenList()
 
 if not os.path.isdir(musicdir):
     print('musicdir does not exist.')
@@ -97,6 +103,7 @@ if not os.path.isdir(musicdir):
 
 print('storage dir is {}'.format(storagedir))
 print('music folder is {}'.format(musicdir))
+print('broken file is {}'.format(brokenfile))
 print('volume is {}'.format(volume))
 
 songs = [f for f in os.listdir(musicdir) if os.path.isfile(os.path.join(musicdir,f))]
@@ -143,6 +150,7 @@ def loadNplay():
 		print('song',songnum,'---',songs[songnum])
 		pygame.mixer.music.play(0)
 	except Exception as e:
+		print('song',songnum,'---',songs[songnum],'ERROR!')
 		print(e)
 		markBroken()
 
@@ -161,13 +169,15 @@ def prev():
 	pygame.mixer.music.stop()
 
 def markBroken():
-	global broken, songs, metadata, songnum
+	global broken, songs, metadata, songnum, killcount
 	song = songs[songnum]
 	broken.append(song)
 	songs.remove(song)
 	metadata.pop(song,None)
-	print('song',songnum,'---',songs[songnum],'has been marked as broken and benched')
-	loadNplay()
+	killcount+=1
+	print(song,'has been marked as broken and benched')
+	songnum-=1
+	pygame.mixer.music.stop()
 
 def next():
 	global songs,songnum,metadata
