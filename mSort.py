@@ -42,10 +42,14 @@ def saveMetadata():
 
 def saveBrokenList():
 	global broken
-	broken = list(filter(lambda a: a != nl, broken))
+	broken = list(set(list(filter(lambda a: a != nl, broken))))
+	count  = 0
+	for b in broken:
+		b.replace(os.linesep,'')
 	broken.sort()
 	for b in broken:
-		print(b)
+		print(b, count)
+		count+=1
 	print(killcount,'songs have been added to broken.txt')
 	if os.path.isfile(brokenfile):
 		os.remove(brokenfile)
@@ -87,7 +91,9 @@ if os.path.isdir(storagedir):
 	if os.path.isfile(brokenfile):
 		with open(brokenfile,'r',encoding='utf-8') as f:
 			broken = f.readlines()
-		broken = list(filter(lambda a: a != nl, broken))
+		broken = list(set(list(filter(lambda a: a != nl, broken))))
+		for b in broken:
+			b.replace(nl,'')
 	else:
 		initBrokenList()
 else:
@@ -150,7 +156,6 @@ def loadNplay():
 		print('song',songnum,'---',songs[songnum])
 		pygame.mixer.music.play(0)
 	except Exception as e:
-		print('song',songnum,'---',songs[songnum],'ERROR!')
 		print(e)
 		markBroken()
 
