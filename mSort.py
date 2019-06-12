@@ -17,7 +17,7 @@ musicdirname = ''
 
 settings = {}
 metadata = {}
-broken = []
+broken = set()
 volume = 0.5
 songnum = 0
 playing = True
@@ -42,14 +42,8 @@ def saveMetadata():
 
 def saveBrokenList():
 	global broken
-	broken = list(set(list(filter(lambda a: a != nl, broken))))
-	count  = 0
-	for b in broken:
-		b.replace(os.linesep,'')
-	broken.sort()
-	for b in broken:
-		print(b, count)
-		count+=1
+	broken.remove('')
+	broken = sorted(broken)
 	print(killcount,'songs have been added to broken.txt')
 	if os.path.isfile(brokenfile):
 		os.remove(brokenfile)
@@ -91,9 +85,7 @@ if os.path.isdir(storagedir):
 	if os.path.isfile(brokenfile):
 		with open(brokenfile,'r',encoding='utf-8') as f:
 			broken = f.readlines()
-		broken = list(set(list(filter(lambda a: a != nl, broken))))
-		for b in broken:
-			b.replace(nl,'')
+		broken.remove(nl)
 	else:
 		initBrokenList()
 else:
@@ -117,7 +109,7 @@ random.shuffle(songs)
 print(len(songs),'songs found')
 
 print(len(broken),'songs to be removed due to damage')
-songs = list(set(songs)-set(broken))
+songs = list(set(songs)-broken)
 print(len(songs),'songs remain')
 
 def playPause():
@@ -176,7 +168,7 @@ def prev():
 def markBroken():
 	global broken, songs, metadata, songnum, killcount
 	song = songs[songnum]
-	broken.append(song)
+	broken.add(song)
 	songs.remove(song)
 	metadata.pop(song,None)
 	killcount+=1
