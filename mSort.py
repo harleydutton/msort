@@ -42,8 +42,7 @@ def saveMetadata():
 
 def saveBrokenList():
 	global broken
-	broken.remove('')
-	broken = sorted(broken)
+	broken = set(sorted(broken))
 	print(killcount,'songs have been added to broken.txt')
 	if os.path.isfile(brokenfile):
 		os.remove(brokenfile)
@@ -84,8 +83,7 @@ if os.path.isdir(storagedir):
 		initMetadataFile()
 	if os.path.isfile(brokenfile):
 		with open(brokenfile,'r',encoding='utf-8') as f:
-			broken = f.readlines()
-		broken.remove(nl)
+			broken = set([element.replace(nl,'') for element in f.readlines()])
 	else:
 		initBrokenList()
 else:
@@ -109,6 +107,7 @@ random.shuffle(songs)
 print(len(songs),'songs found')
 
 print(len(broken),'songs to be removed due to damage')
+print(broken)
 songs = list(set(songs)-broken)
 print(len(songs),'songs remain')
 
