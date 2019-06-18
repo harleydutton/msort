@@ -4,6 +4,7 @@ import random
 import pygame
 import keyboard
 import mutagen.mp3
+import stringdist
 
 sep = os.path.sep
 nl = '\n'
@@ -187,10 +188,33 @@ def next():
 			metadata[song]['skips']=1
 	pygame.mixer.music.stop()
 
+def search(s):
+	out = ''
+	smallest = 9999
+	for song in songs:
+		l = stringdist.levenshtein(song,s)
+		if l < smallest:
+			out = song
+			smallest = l
+	return out
+
 def quit():
 	global alive
 	print('exiting...')
 	alive = False
+
+def record():
+	print('type your query and hit enter')
+	gen = keyboard.record('enter',True)
+	print(gen)
+	string = keyboard.get_typed_strings(gen,True)
+	print(string)
+	out=''
+	for item in string:
+		out+=item
+		print(item)
+	print(out)
+
 
 keyboard.add_hotkey('ctrl+shift+q',quit,args=())
 keyboard.add_hotkey('ctrl+down',playPause,args=())
@@ -199,6 +223,8 @@ keyboard.add_hotkey('ctrl+shift+-',volDown,args=())
 keyboard.add_hotkey('ctrl+right',next,args=())
 keyboard.add_hotkey('ctrl+left',prev,args=())
 keyboard.add_hotkey('ctrl+shift+x',markBroken,args=())
+keyboard.add_hotkey('ctrl+shift+f',record,args=())
+
 
 pygame.mixer.init()
 while alive == True:
