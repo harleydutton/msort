@@ -6,6 +6,7 @@
   * pip 19.1.1
   * pygame 1.9.6
   * mutagen 1.42.0
+  * stringdist 1.0.9
 
 ## Description
 mSort is a custom media player I have written in python to include some custom features I was not able to find in commercially available media players.
