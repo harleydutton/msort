@@ -13,6 +13,7 @@ print('found {} songs'.format(len(songs)))
 
 alive = True
 def quit():
+	global alive
 	alive = False
 
 def search(s):
