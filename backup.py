@@ -18,23 +18,16 @@ def quit():
 def search(s):
 	setout = ''
 	setlargest = 0
-	# partiallargest = 0
-	# partialout = ''
 	for song in songs:
 		setl = fuzz.token_set_ratio(song[0:-4].lower(),s.lower())
-		# partiall = fuzz.partial_ratio(song[0:-4].lower(),s.lower())
-		# print('{} is a {}% partial match with {}'.format(s,partiall,song))
 		print('{} is a {}%  set match with {}'.format(s,setl,song))
 		if setl > setlargest:
 			setout = song
 			setlargest = setl
 			print('best set match is {} with {}%'.format(setout,setlargest))
-		# if partiall > partiallargest:
-		# 	partialout = song
-		# 	partiallargest = partiall
-		# 	print('best partial match is {} with {}%'.format(partialout,partiallargest))
-	print(setlargest)#,partiallargest)
-	return [setout,setlargest]#,partialout,partiallargest]
+	print(setlargest)
+	return [setout,setlargest]
+
 
 def doTheThing():
 	start = datetime.now()
@@ -49,7 +42,7 @@ def doTheThing():
 	print(temp)
 	r = sr.Recognizer()
 	with sr.AudioFile(temp) as source:
-	    audio = r.record(source)  # read the entire audio file
+	    audio = r.record(source)
 	try:
 	    query = r.recognize_google(audio)
 	    print(search(query))
