@@ -3,12 +3,10 @@ import speech_recognition as sr
 import os
 import sounddevice as sd
 import wavio
-from fuzzywuzzy import fuzz
 from datetime import datetime
 
 
-musicdir = 'C:\\Users\\Harley\\desktop\\music - Copy'
-songs = [f for f in os.listdir(musicdir) if os.path.isfile(os.path.join(musicdir,f))]
+
 print('found {} songs'.format(len(songs)))
 
 alive = True
