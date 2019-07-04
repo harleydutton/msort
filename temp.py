@@ -13,18 +13,6 @@ hotkey = 'ctrl+shift+f'
 filepath = 'c:\\users\\harley\\desktop\\msortlocaldata\\temp.wav'
 
 
-
-
-#OPTIMIZATION IDEAS
-#look into multithreading
-
-#the list can be slipt over processors
-#searching for artist/title/album can all be separate jobs
-
-#if you find the theoretical max for a category you can be done with your list
-
-
-
 def fun1():
 	def fun2(hk,fp):
 		start = dt.now()

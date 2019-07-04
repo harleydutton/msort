@@ -4,7 +4,11 @@ import random
 import pygame
 import keyboard
 import mutagen.mp3
-import stringdist
+from search import search
+from scribe import transcribe
+from record import rec
+from datetime import datetime as dt
+from stopwatch import lap
 
 sep = os.path.sep
 nl = '\n'
@@ -13,6 +17,7 @@ storagedir = localdir+sep+'mSortLocalData'
 brokenfile = storagedir+sep+'broken.txt'
 settingsfile = storagedir+sep+'settings.json'
 metadatafile = storagedir+sep+'metadata.json'
+recordingfile = storagedir+sep+'recording.wav'
 musicdir = ''
 musicdirname = ''
 
@@ -188,33 +193,27 @@ def next():
 			metadata[song]['skips']=1
 	pygame.mixer.music.stop()
 
-def search(s):
-	out = ''
-	smallest = 9999
-	for song in songs:
-		l = stringdist.levenshtein(song,s)
-		if l < smallest:
-			out = song
-			smallest = l
-	return out
+searchHotkey = 'ctrl+shift+f'
+def searchThenPlay():
+	global songnum
+	lap()
+	rec(searchHotkey,recordingfile)
+	print('listening took ',lap(),' seconds')
+	transcription = transcribe(recordingfile)
+	print('transcribing took ',lap(),' seconds and I think you said ',transcription)
+	found = search(transcription,[s[:-4] for s in songs])
+	print('searching took ',lap(),' seconds and found the song ',found)
+	index = songs.index(found+'.mp3')
+	if isinstance(index,int):
+		songnum=index-1
+		next()
+
+
 
 def quit():
 	global alive
 	print('exiting...')
 	alive = False
-
-def record():
-	print('type your query and hit enter')
-	gen = keyboard.record('enter',True)
-	print(gen)
-	string = keyboard.get_typed_strings(gen,True)
-	print(string)
-	out=''
-	for item in string:
-		out+=item
-		print(item)
-	print(out)
-
 
 keyboard.add_hotkey('ctrl+shift+q',quit,args=())
 keyboard.add_hotkey('ctrl+down',playPause,args=())
@@ -223,7 +222,7 @@ keyboard.add_hotkey('ctrl+shift+-',volDown,args=())
 keyboard.add_hotkey('ctrl+right',next,args=())
 keyboard.add_hotkey('ctrl+left',prev,args=())
 keyboard.add_hotkey('ctrl+shift+x',markBroken,args=())
-keyboard.add_hotkey('ctrl+shift+f',record,args=())
+keyboard.add_hotkey(searchHotkey,searchThenPlay,args=())
 
 
 pygame.mixer.init()
