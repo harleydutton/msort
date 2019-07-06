@@ -1,0 +1,18 @@
+{
+	"musicdir" : "?",
+	"thisdir" : "c:/users/harley/desktop/msort",
+	"sep" : "os.path.sep",
+
+	"brokenfile" : "thisdir/storage/broken.txt",
+	"settingsfile" : "thisdir/storage/settings.json",
+	"metadatafile" : "thisdir/storage/metadata.json",
+	"recordingfile" : "thisdir/storage/recording.wav",
+
+	"volume" : "0.5",
+
+	"songnum" : "0",
+	"killcount" : "0",
+
+	"playing" : "True",
+	"alive" : "True",
+}
