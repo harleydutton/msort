@@ -57,7 +57,9 @@ make failed searches (based on a threshhold for the usual search accuracy) downl
 
 add some method for detecting online status
 
-get transcription to work offline. this probably means finding a new library for the task
+get transcription to work offline. this probably means finding a new library for the task. when complete possibly merge record into scribe.
+
+write pickFile() for fileman
 
 ## Devlopment Log
 Encountered many problems with python. switching to java. should help with android port.
