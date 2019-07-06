@@ -1,5 +1,2 @@
-import filepicker
-import time
-
-temp = filepicker.pick()
-print('from main',temp)
+import folderpicker
+print(folderpicker.pick('please indicate where you have stored your music'))
