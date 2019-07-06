@@ -1,37 +1,16 @@
-import keyboard as k
-import os
-from fuzzywuzzy import fuzz
-from record import rec
-from scribe import transcribe
-from datetime import datetime as dt
-import search
+import os,fileman
+path = 'c:\\users\\harley\\desktop\\blah\\'
+filename = 'myfile.txt'
+data = 'first line\nsecond line\nthird line'
+os.makedirs(path,exist_ok=True)
+with open(path+filename,'w+') as f:
+	f.write(data)
+print(data)
+print(80*'#')
+fileman.init('c:\\users\\harley\\desktop')
+fileman.write('this\\is\\a\\path','file1.txt',data+'\nanother line')
+fileman.write('this\\is\\a\\path','file1.txt',data)
+fileman.write('\\this\\is\\not\\a\\path\\','\\file1.txt',data)
+print(fileman.read('my\\second\\filepath','file2.txt','line1\nline2'))
+print(fileman.read('this\\is\\a\\path','file1.txt','line1\nline2'))
 
-musicdir = 'C:\\Users\\Harley\\desktop\\music - Copy'
-songs = [f for f in os.listdir(musicdir) if os.path.isfile(os.path.join(musicdir,f))]
-print('num',len(songs))
-hotkey = 'ctrl+shift+f'
-filepath = 'c:\\users\\harley\\desktop\\msortlocaldata\\temp.wav'
-
-
-def fun1():
-	def fun2(hk,fp):
-		start = dt.now()
-		os.remove(filepath)
-		rec(hk,fp)
-		print(search.searchA(transcribe(fp),[s[:-4] for s in songs]))
-		end = dt.now()
-		elapsed=end-start
-		print(elapsed.total_seconds())
-	return fun2
-
-
-k.add_hotkey(hotkey,fun1(),args=(hotkey,filepath))
-
-
-alive = True
-def quit():
-	global alive
-	alive = False
-k.add_hotkey('ctrl+shift+q',quit,args=())
-while(alive):
-	pass
