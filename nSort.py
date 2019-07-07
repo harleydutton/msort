@@ -12,13 +12,33 @@ from scribe import transcribe
 from record import rec
 from stopwatch import lap
 
-#gameplan for tomorrow.
-#add a method to fileman that gets a list of filename,relative_path tuples from a relativeRoot
-#do repeated substitution on this top half until it is shrunk
-#possibly add support for multiple music directories
-#volume up and down can be made 2 lines shorter each with min() and max()
-#all the hotkey definitions should be in settings
-#remove nonessential print statements
+######################################################################
+######################################################################
+
+#remaining questions
+#can we prettify the json objects being sent to fileman
+#can we write as csv for excel?
+
+#the format for songs will be a list of (path,filename) tuples
+#the format for broken will be a dictionary with (path,filename) tuples
+#as keys and a reason string as values
+
+#abstract
+#list songs, pick music folder if None
+#read brokenfile,settingsfile,metadatafile
+#PLAY MUSIC
+#write settings, broken, metadata
+
+#tidbits and todo
+#hotkey definitions should be up here
+#volume up can be optimized
+#remove non-essential print statements
+#store brokenlist sorted?
+#put constants in another file and import them
+
+######################################################################
+######################################################################
+
 c = { #constants
 	"storagedir" : "storage"
 	"settingsfile" : "settings.json",
@@ -26,6 +46,7 @@ c = { #constants
 	"recordingfile" : "recording.wav",
 	"reason" : "Where is your music located?"
 }
+#try to read settings from file first
 settings = {
 	"volume" : 0.5,
 	"musicdir" : fileman.pickFolder(c['reason']),
@@ -37,25 +58,8 @@ iv = { #instance variables
 	alive = True,
 	killcount = 0,
 }
-#i'm not sure where to put these.
-#they are changable but also persistient
-#furthermore, they are large enough to be their own files most times
 metadata = {}
 broken = set()
-
-
-
-######################################################################
-######################################################################
-######################################################################
-######################################################################
-
-#go through and figure out what all operations are performed on songs
-#set math (subtracting broken)
-#get length
-#access element by songnum
-#remove element by songname
-
 
 
 fileman.cd(settings['musicdir'])
@@ -73,62 +77,14 @@ fileman.write('',c['settingsfile'],json.dumps(settings))
 fileman.write('',c['metadatafile'],json.dumps(metadata))
 
 
-#this needs to be analyized real good, taken apart, and destroyed
-def saveBrokenList():
-	global broken
-	broken = set(sorted(broken))
-	print(killcount,'songs have been added to broken.txt')
-	if os.path.isfile(brokenfile):
-		os.remove(brokenfile)
-	with open(brokenfile,'w',encoding='utf-8') as f:
-		for b in broken:
-			f.write(b+nl)
-
-
-if os.path.isdir(storagedir):
-	if os.path.isfile(settingsfile):
-		with open(settingsfile,'r') as f:
-			settings = json.loads(f.read())
-			musicdir = settings['musicdir']
-			musicdirname = settings['musicdirname']
-			volume = settings['volume']
-	else:
-		initSettingsFile()
-	if os.path.isfile(metadatafile):
-		f = open(metadatafile,'r')
-		metadata = json.loads(f.read())
-		f.close()
-	else:
-		initMetadataFile()
-	if os.path.isfile(brokenfile):
-		with open(brokenfile,'r',encoding='utf-8') as f:
-			broken = set([element.replace(nl,'') for element in f.readlines()])
-	else:
-		initBrokenList()
-else:
-	os.makedirs(storagedir)
-	initSettingsFile()
-	initMetadataFile()
-	initBrokenList()
-
-
-
+#on exit
+#possibly sort broken and save it sorted
+print(killcount,'songs have been added to broken.txt')
+fileman.write('',c['brokenfile'],json.dumps(broken))
 
 
 ##################################################################
 ##################################################################
-##################################################################
-##################################################################
-##################################################################
-##################################################################
-
-
-
-
-
-
-
-
 
 
 def playPause():
