@@ -30,84 +30,85 @@ from stopwatch import lap
 #write settings, broken, metadata
 
 #tidbits and todo
-#hotkey definitions should be up here
 #volume up can be optimized
 #remove non-essential print statements
-#store brokenlist sorted?
-#put constants in another file and import them
+#put print messages in constants
+#put constants in another file and import them?
+#what about duplicate filenames in brokenlist 
+#have fileman.cd normalize the path it stores.
+#have all fileman relative_path arguments have a default of ''
+#add a getter to fileman for the current directory
+#make the .json files we write pretty
+#redo keybinds with settings[Xhotkey]
+#import fileman as fm
+#can filepicker be written without the middleman? no tkinter window?
 
+#formats for songs and brokenlist
+# [('path','filename'),('path','filename'),...]
+# {('path','filename'):'reason',('path','filename'):'reason',...}
 ######################################################################
 ######################################################################
 
 c = { #constants
 	"storagedir" : "storage"
 	"settingsfile" : "settings.json",
+	"brokenfile" : "broken.json",
 	"metadatafile" : "metadata.json",
 	"recordingfile" : "recording.wav",
 	"reason" : "Where is your music located?"
 }
-#try to read settings from file first
-settings = {
-	"volume" : 0.5,
-	"musicdir" : fileman.pickFolder(c['reason']),
-}
-
 iv = { #instance variables
 	songnum = 0,
 	playing = True,
 	alive = True,
-	killcount = 0,
+	killcount = 0
 }
-metadata = {}
-broken = set()
+settings = {
+	"volume" : 0.1,
+	"musicdir" : None,
+	"quitHotkey" : "ctrl+shift+q",
+	"playPauseHotkey" : "ctrl+down",
+	"nextHotkey" : "ctrl+right",
+	"prevHotkey" : "ctrl+left",
+	"volUpHotkey" : "ctrl+shift+plus",
+	"volDownHotkey" : "ctrl+shift+-",
+	"markBrokenHotkey" : "ctrl+shift+x",
+	"searchHotkey" : "ctrl+shift+f"
+}
+metadata = {} 
+broken = {} 
 
-
+fileman.cd(os.getcwd()+os.path.sep+c['storagedir'])
+settings = json.loads(fileman.readFile('',c['settingsfile'],default_data=json.dumps(settings)))
+metadata = json.loads(fileman.readFile('',c['metadatafile'],default_data=json.dumps(metadata)))
+broken = json.loads(fileman.readFile('',c['brokenfile'],default_data=json.dumps(broken)))
+while settings['musicdir'] is None:
+	settings['musicdir']=fileman.pickFolder(c['reason'])
 fileman.cd(settings['musicdir'])
-songs = fileman.listFiles('')
-random.shuffle(songs)
-fileman.cd(os.getcwd()+os.sep+c['storagedir'])
-broken = set(fileman.read('',c['brokenfile'],'').split('\n'))
-#this no longer works
-songs = list(set(songs)-broken)
-
-
-
-#these need to be transplanted
-fileman.write('',c['settingsfile'],json.dumps(settings))
-fileman.write('',c['metadatafile'],json.dumps(metadata))
-
-
-#on exit
-#possibly sort broken and save it sorted
-print(killcount,'songs have been added to broken.txt')
-fileman.write('',c['brokenfile'],json.dumps(broken))
-
-
-##################################################################
-##################################################################
-
+songs = random.shuffle(fileman.listFiles(''))
+songs = list(set(songs)-set(broken.keys()))
 
 def playPause():
     global playing
-    if playing:
-        pygame.mixer.music.pause()
-    else:
-        pygame.mixer.music.unpause()
+    if playing: pygame.mixer.music.pause()
+    else: pygame.mixer.music.unpause()
     playing = not playing
 
 def volDown():
     global volume
-    volume = volume * 0.9
-    if volume <= 0.0:
-        volume = 0.001
+    volume = max(volume * 0.9,0.001)
     pygame.mixer.music.set_volume(volume)
 
 def volUp():
     global volume
-    volume = volume * 1.1
-    if volume >= 1.0:
-        volume = 1.0
+    volume = min(volume * 1.1,1.0)
     pygame.mixer.music.set_volume(volume)
+
+def quit():
+	global alive
+
+
+##############################################################
 
 def loadNplay():
 	global songnum,songs,musicdir,sep,volume
@@ -178,13 +179,6 @@ def searchThenPlay():
 		songnum=index-1
 		next()
 
-
-
-def quit():
-	global alive
-	print('exiting...')
-	alive = False
-
 keyboard.add_hotkey('ctrl+shift+q',quit,args=())
 keyboard.add_hotkey('ctrl+down',playPause,args=())
 keyboard.add_hotkey('ctrl+shift+plus',volUp,args=())
@@ -194,7 +188,6 @@ keyboard.add_hotkey('ctrl+left',prev,args=())
 keyboard.add_hotkey('ctrl+shift+x',markBroken,args=())
 keyboard.add_hotkey(searchHotkey,searchThenPlay,args=())
 
-
 pygame.mixer.init()
 while alive == True:
 	loadNplay()
@@ -202,11 +195,9 @@ while alive == True:
 		pass
 	songnum = songnum + 1
 pygame.mixer.music.stop()
-saveMetadata()
-saveSettings()
-saveBrokenList()
 pygame.mixer.quit()
-print('goodbye.')
-    
-    
-    
+
+if killcount: print(killcount,'songs have been added to broken.txt')
+fileman.write('',c['brokenfile'],json.dumps(broken))
+fileman.write('',c['settingsfile'],json.dumps(settings))
+fileman.write('',c['metadatafile'],json.dumps(metadata))
